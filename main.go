@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 )
 
 type Person struct {
@@ -15,11 +16,15 @@ type Person struct {
 var list = []Person{Person{0, "person1", 18}, Person{1, "person2", 19}, Person{0, "person1", 18}, Person{2, "person3", 20}}
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "9090" // Default port if not specified
+	}
+
 	router := gin.Default()
 	router.GET("/persons", getPersons)
 	router.POST("/post", addPerson)
-	router.Run("localhost:9090")
-
+	router.Run(":" + port)
 }
 
 // convert data into json
@@ -37,5 +42,4 @@ func addPerson(context *gin.Context) {
 	list = append(list, pers)
 	fmt.Println(list)
 	context.IndentedJSON(http.StatusCreated, pers)
-
 }
