@@ -4,8 +4,10 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
-	"strings"
+	"net/http"
+	"strconv"
 	"time"
 
 	routespb "google.golang.org/genproto/googleapis/maps/routing/v2"
@@ -21,7 +23,36 @@ const (
 	serverAddr = "routes.googleapis.com:443"
 )
 
-func getRoute() {
+func getRoute(context_gin *gin.Context) {
+
+	start_latitudeStr := context_gin.Query("start_latitude")
+	start_longitudeStr := context_gin.Query("start_longitude")
+	end_latitudeStr := context_gin.Query("end_latitude")
+	end_longitudeStr := context_gin.Query("end_longitude")
+
+	// Convert latitude and longitude to float64
+	start_latitude, err := strconv.ParseFloat(start_latitudeStr, 64)
+	if err != nil {
+		context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
+		return
+	}
+	start_longitude, err := strconv.ParseFloat(start_longitudeStr, 64)
+	if err != nil {
+		context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
+		return
+	}
+
+	end_latitude, err := strconv.ParseFloat(end_latitudeStr, 64)
+	if err != nil {
+		context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
+		return
+	}
+	end_longitude, err := strconv.ParseFloat(end_longitudeStr, 64)
+	if err != nil {
+		context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
+		return
+	}
+
 	config := tls.Config{}
 	conn, err := grpc.Dial(serverAddr,
 		grpc.WithTransportCredentials(credentials.NewTLS(&config)))
@@ -40,8 +71,8 @@ func getRoute() {
 		LocationType: &routespb.Waypoint_Location{
 			Location: &routespb.Location{
 				LatLng: &latlng.LatLng{
-					Latitude:  43.271326,
-					Longitude: 76.952299,
+					Latitude:  start_latitude,
+					Longitude: start_longitude,
 				},
 			},
 		},
@@ -52,8 +83,8 @@ func getRoute() {
 		LocationType: &routespb.Waypoint_Location{
 			Location: &routespb.Location{
 				LatLng: &latlng.LatLng{
-					Latitude:  43.253762,
-					Longitude: 76.932571,
+					Latitude:  end_latitude,
+					Longitude: end_longitude,
 				},
 			},
 		},
@@ -74,18 +105,16 @@ func getRoute() {
 		PolylineQuality: routespb.PolylineQuality_OVERVIEW,
 	}
 
-	// execute rpc
 	resp, err := client.ComputeRoutes(ctx, req)
 
 	if err != nil {
-		// "rpc error: code = InvalidArgument desc = Request contains an invalid
-		// argument" may indicate that your project lacks access to Routes
+
 		log.Fatal(err)
 	}
 	respString := fmt.Sprintf("%v", resp)
-	respString = strings.ReplaceAll(respString, "start_location", "\nstart_location\n")
-	respString = strings.ReplaceAll(respString, "end_location", "\nend_location\n")
+	//respString = strings.ReplaceAll(respString, "start_location", "\nstart_location\n")
+	//respString = strings.ReplaceAll(respString, "end_location", "\nend_location\n")
 
-	fmt.Printf("Response: %v", respString)
+	context_gin.String(http.StatusOK, respString)
 
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 type Person struct {
@@ -25,7 +24,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/persons", getPersons)
 	router.POST("/post", addPerson)
-	router.GET("/hey", getHey)
+	router.GET("/hey", getRoute)
 	router.Run(":" + port)
 }
 
@@ -46,25 +45,41 @@ func addPerson(context *gin.Context) {
 	context.IndentedJSON(http.StatusCreated, pers)
 }
 
-func getHey(context *gin.Context) {
-	// Get latitude and longitude parameters from query string
-	latitudeStr := context.Query("latitude")
-	longitudeStr := context.Query("longitude")
+func getHey(context_gin *gin.Context) {
+	//// Get latitude and longitude parameters from query string
+	//start_latitudeStr :=  context_gin.Query("start_latitude")
+	//start_longitudeStr:=  context_gin.Query("start_longitude")
+	//end_latitudeStr :=    context_gin.Query("end_latitude")
+	//end_longitudeStr :=   context_gin.Query("end_longitude")
+	//
+	//// Convert latitude and longitude to float64
+	//start_latitude, err := strconv.ParseFloat(start_latitudeStr, 64)
+	//if err != nil {
+	//	context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
+	//	return
+	//}
+	//start_longitude, err := strconv.ParseFloat(start_longitudeStr, 64)
+	//if err != nil {
+	//	context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
+	//	return
+	//}
+	//
+	//end_latitude, err := strconv.ParseFloat(end_latitudeStr, 64)
+	//if err != nil {
+	//	context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
+	//	return
+	//}
+	//end_longitude, err := strconv.ParseFloat(end_longitudeStr, 64)
+	//if err != nil {
+	//	context_gin.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
+	//	return
+	//}
+	//
+	////etRoute(start_latitude,start_longitude ,end_latitude, end_longitude)
+	//
+	//context.String(http.StatusOK, "hey")
+}
 
-	// Convert latitude and longitude to float64
-	latitude, err := strconv.ParseFloat(latitudeStr, 64)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
-		return
-	}
-	longitude, err := strconv.ParseFloat(longitudeStr, 64)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
-		return
-	}
-	fmt.Println(longitude, latitude)
+func get(latitude float64, longitude float64, latitude2 float64, longitude2 float64) {
 
-	// Your logic here to handle latitude and longitude...
-	// For now, simply return the string "hey"
-	context.String(http.StatusOK, "hey")
 }
