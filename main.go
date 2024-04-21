@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type Person struct {
@@ -24,6 +25,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/persons", getPersons)
 	router.POST("/post", addPerson)
+	router.GET("/hey", getHey)
 	router.Run(":" + port)
 }
 
@@ -42,4 +44,27 @@ func addPerson(context *gin.Context) {
 	list = append(list, pers)
 	fmt.Println(list)
 	context.IndentedJSON(http.StatusCreated, pers)
+}
+
+func getHey(context *gin.Context) {
+	// Get latitude and longitude parameters from query string
+	latitudeStr := context.Query("latitude")
+	longitudeStr := context.Query("longitude")
+
+	// Convert latitude and longitude to float64
+	latitude, err := strconv.ParseFloat(latitudeStr, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid latitude"})
+		return
+	}
+	longitude, err := strconv.ParseFloat(longitudeStr, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid longitude"})
+		return
+	}
+	fmt.Println(longitude, latitude)
+
+	// Your logic here to handle latitude and longitude...
+	// For now, simply return the string "hey"
+	context.String(http.StatusOK, "hey")
 }
