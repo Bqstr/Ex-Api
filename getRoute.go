@@ -19,7 +19,7 @@ import (
 
 const (
 	fieldMask  = "routes.duration,routes.distanceMeters,routes.legs"
-	apiKey     = "AIzaSyCQ3aLkzejyUJsYPbfUP8DowJdOsy6VOgg"
+	apiKey     = "AIzaSyCsT_eAziBijrHOBCVAbEvZqn78Ba0E3Ss"
 	serverAddr = "routes.googleapis.com:443"
 )
 
