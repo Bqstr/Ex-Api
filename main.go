@@ -46,29 +46,15 @@ func personExists(id int) bool {
 }
 
 func addPerson(context *gin.Context) {
-	var requestData struct {
-		ID         int `json:"id"`
-		MoneyToAdd int `json:"money_to_add"`
-	}
-
-	if err := context.BindJSON(&requestData); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+	var pers Person
+	var err = context.BindJSON(&pers)
+	if err != nil {
 		return
 	}
 
-	found := false
-	for i := range list {
-		if list[i].ID == requestData.ID {
-			list[i].MONEY += requestData.MoneyToAdd
-			context.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Added %d money to person with ID %d", requestData.MoneyToAdd, requestData.ID)})
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		context.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Person with ID %d not found", requestData.ID)})
-	}
+	list = append(list, pers)
+	fmt.Println(list)
+	context.IndentedJSON(http.StatusCreated, pers)
 }
 
 func addMoney(context *gin.Context) {
